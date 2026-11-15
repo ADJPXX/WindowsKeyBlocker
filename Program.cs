@@ -7,7 +7,7 @@ namespace WindowsKeyBlocker;
 
 internal static class Program
 {
-    private static readonly Config Config = new();
+    private static Config _config = new();
 
     private const string InstanceMutexName = @"Local\WindowsKeyBlocker.Instance";
     private const string StopEventName = @"Local\WindowsKeyBlocker.Stop";
@@ -33,7 +33,7 @@ internal static class Program
         {
             ReadJson();
 
-            using var instanceMutex = new Mutex(true, InstanceMutexName, out bool createdNew);
+            using var instanceMutex = new Mutex(true, InstanceMutexName, out var createdNew);
             if (!createdNew)
                 return 0;
 
@@ -163,7 +163,7 @@ internal static class Program
         try
         {
             using var process = Process.GetProcessById((int)processId);
-            return Config.Executables.Contains(process.ProcessName);
+            return _config.Executables.Contains(process.ProcessName);
         }
         catch
         {
@@ -192,6 +192,10 @@ internal static class Program
             {
                 throw new Exception("ARQUIVO DE CONFIGURAÇÃO INVÁLIDO");
             }
+
+            _config.Executables.Clear();
+
+            _config.Executables.UnionWith(config.Executables);
         }
         catch (Exception ex)
         {
@@ -231,7 +235,7 @@ internal static class Program
 
                 var config = JsonSerializer.Deserialize<Config>(json);
 
-                if (config is not null && !config.Executables.Contains("game 1") || !config.Executables.Contains("game 2"))
+                if (config is not null && (!config.Executables.Contains("game 1") || !config.Executables.Contains("game 2")))
                 {
                     return;
                 }
