@@ -7,6 +7,11 @@
         <Nullable>disable</Nullable>
         <DebugType>None</DebugType>
         <DebugSymbols>false</DebugSymbols>
+        <ApplicationIcon>Resources\wkb.ico</ApplicationIcon>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\wkb.ico" />
+    </ItemGroup>
 
 </Project>
